@@ -1,0 +1,64 @@
+{
+  "words" : [
+{
+    "en": ["mike", "gets", "up"],
+    "vi": ["Mike (tên riêng)", "thức dậy", "dậy lên"],
+    "type": ["noun", "verb", "adverb"]
+  },
+ {
+    "en": ["breakfast", "coffee", "drives"],
+    "vi": ["bữa sáng", "cà phê", "lái xe"],
+    "type": ["noun", "noun", "verb"]
+  },
+{
+    "en": ["work", "car", "starts"],
+    "vi": ["công việc", "xe hơi", "bắt đầu"],
+    "type": ["noun", "noun", "verb"]
+  },
+  {
+    "en": ["cook", "restaurant", "food"],
+    "vi": ["đầu bếp", "nhà hàng", "thức ăn"],
+    "type": ["noun", "noun", "noun"]
+  },
+ {
+    "en": ["customers", "countries", "languages"],
+    "vi": ["khách hàng", "quốc gia", "ngôn ngữ"],
+    "type": ["noun", "noun", "noun"]
+  },
+ {
+    "en": ["friendly", "happy", "talks"],
+    "vi": ["thân thiện", "vui vẻ", "nói chuyện"],
+    "type": ["adjective", "adjective", "verb"]
+  }
+],
+
+  "phrases": 
+     [
+  {
+    "en": ["gets up"],
+    "vi": ["thức dậy"],
+    "type": ["verb"]
+  },
+  {
+    "en": ["drives to work"],
+    "vi": ["lái xe đi làm"],
+    "type": ["verb"]
+  },
+  {
+    "en": ["makes food"],
+    "vi": ["nấu ăn"],
+    "type": ["verb"]
+  },
+  {
+    "en": ["friendly people"],
+    "vi": ["những người thân thiện"],
+    "type": ["noun phrase"]
+  },
+  {
+    "en": ["every morning"],
+    "vi": ["mỗi buổi sáng"],
+    "type": ["adverbial phrase"]
+  }
+]
+  
+}
