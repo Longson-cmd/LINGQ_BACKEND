@@ -35,7 +35,6 @@ lingq/
 ├── run.ps1 # PowerShell script to run server and manage setup
 ├── requirements.txt # Python dependencies
 └── manage.py # Django project entry point
-## 📂 Project Structure
 
 
 ---
