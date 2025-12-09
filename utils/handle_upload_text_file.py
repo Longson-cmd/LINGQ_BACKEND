@@ -55,13 +55,14 @@ def create_lesson(request, txt_path):
     phrases_qs = Phrases.objects.filter(user = request.user)
     phrase_lists = [(ph.phrase.split() , ph.phrase_status) for ph in phrases_qs]
    
-    for item in list_id:
+    for  word_idx, item in enumerate(list_id):
         list_words_in_lesson.append({
             "word" : item[0],
             "status" : status_word_dict.get(clean_word(item[0]), 6),
+            'w_idx' : word_idx,
             "p_idx" : item[1][0],
             "s_idx" : item[1][1],
-            "phrase_status" : 0
+            "type" : 'word'
         })
 
     group_by_sentence = group_by_para_or_sentence(list_words_in_lesson, "s_idx")
@@ -70,10 +71,26 @@ def create_lesson(request, txt_path):
         for phrase_list, phrase_status in phrase_lists:
             if len(sentence_list) < len(phrase_list):
                 continue
-            for i in range(len(sentence_list) - len(phrase_list) + 1):
+            i = 0
+            while i < (len(sentence_list) - len(phrase_list) + 1):
                 if sentence_list[i: i+len(phrase_list)] == phrase_list:
-                    for j in range(len(phrase_list)):
-                        items_in_sentence[i+j]["phrase_status"] = phrase_status
+
+                    chuck = items_in_sentence[i : i + len(phrase_list)]
+                    items_in_sentence[i] = {
+                        "phrase" : chuck,
+                        "status" : phrase_status,
+                        "p_idx" : items_in_sentence[i]['p_idx'],
+                        "s_idx" : items_in_sentence[i]['s_idx'],
+                        "type" : 'phrase'
+                    }
+
+                    del items_in_sentence[i + 1: i + len(phrase_list)]
+                    del sentence_list[i+ 1: i + len(phrase_list)]
+                    i += len(phrase_list)
+                else:
+                    i += 1
+
+                  
 
     list_words_in_lesson = []
 
@@ -132,5 +149,7 @@ def convert_input_to_txt(uploaded_file):
         raise ValueError(f"[⚠] Unsupported format: {ext}")
     print(f"[✔] Converted {ext} file → txt")
     return content
+
+
 
 

@@ -14,7 +14,7 @@ def register_user(request):
         username = email
 
         if User.objects.filter(email= email).exists():
-            return JsonResponse({"message" : "this account already exists"})
+            return JsonResponse({"message" : "this account already exists"},  status=400)
         
         user = User.objects.create_user(
             email=email,

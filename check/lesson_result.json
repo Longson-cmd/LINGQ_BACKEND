@@ -1,0 +1,550 @@
+[
+    [
+        [
+            {
+                "word": "Mike",
+                "status": 0,
+                "p_idx": 0,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "phrase": [
+                    {
+                        "word": "gets",
+                        "status": 0,
+                        "p_idx": 0,
+                        "s_idx": 0,
+                        "type": "word"
+                    },
+                    {
+                        "word": "up",
+                        "status": 0,
+                        "p_idx": 0,
+                        "s_idx": 0,
+                        "type": "word"
+                    }
+                ],
+                "status": 1,
+                "p_idx": 0,
+                "s_idx": 0,
+                "type": "phrase"
+            },
+            {
+                "word": "at",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "six",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "am",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "phrase": [
+                    {
+                        "word": "every",
+                        "status": 6,
+                        "p_idx": 0,
+                        "s_idx": 0,
+                        "type": "word"
+                    },
+                    {
+                        "word": "morning.",
+                        "status": 6,
+                        "p_idx": 0,
+                        "s_idx": 0,
+                        "type": "word"
+                    }
+                ],
+                "status": 5,
+                "p_idx": 0,
+                "s_idx": 0,
+                "type": "phrase"
+            }
+        ],
+        [
+            {
+                "word": "He",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "makes",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "breakfast",
+                "status": 1,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "and",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "drinks",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "a",
+                "status": 6,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "coffee.",
+                "status": 1,
+                "p_idx": 0,
+                "s_idx": 1,
+                "type": "word"
+            }
+        ]
+    ],
+    [
+        [
+            {
+                "word": "He",
+                "status": 6,
+                "p_idx": 1,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "phrase": [
+                    {
+                        "word": "drives",
+                        "status": 1,
+                        "p_idx": 1,
+                        "s_idx": 0,
+                        "type": "word"
+                    },
+                    {
+                        "word": "to",
+                        "status": 6,
+                        "p_idx": 1,
+                        "s_idx": 0,
+                        "type": "word"
+                    },
+                    {
+                        "word": "work",
+                        "status": 2,
+                        "p_idx": 1,
+                        "s_idx": 0,
+                        "type": "word"
+                    }
+                ],
+                "status": 2,
+                "p_idx": 1,
+                "s_idx": 0,
+                "type": "phrase"
+            },
+            {
+                "word": "in",
+                "status": 6,
+                "p_idx": 1,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "his",
+                "status": 6,
+                "p_idx": 1,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "car?",
+                "status": 2,
+                "p_idx": 1,
+                "s_idx": 0,
+                "type": "word"
+            }
+        ]
+    ],
+    [
+        [
+            {
+                "word": "His",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "work",
+                "status": 2,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "starts",
+                "status": 2,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "at",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "seven",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "thirty",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "am!",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 0,
+                "type": "word"
+            }
+        ],
+        [
+            {
+                "word": "Mike",
+                "status": 0,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "is",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "a",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "cook",
+                "status": 3,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "at",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "a",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "restaurant.",
+                "status": 3,
+                "p_idx": 2,
+                "s_idx": 1,
+                "type": "word"
+            }
+        ],
+        [
+            {
+                "word": "He",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 2,
+                "type": "word"
+            },
+            {
+                "phrase": [
+                    {
+                        "word": "makes",
+                        "status": 6,
+                        "p_idx": 2,
+                        "s_idx": 2,
+                        "type": "word"
+                    },
+                    {
+                        "word": "food",
+                        "status": 3,
+                        "p_idx": 2,
+                        "s_idx": 2,
+                        "type": "word"
+                    }
+                ],
+                "status": 3,
+                "p_idx": 2,
+                "s_idx": 2,
+                "type": "phrase"
+            },
+            {
+                "word": "for",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 2,
+                "type": "word"
+            },
+            {
+                "word": "hungry",
+                "status": 6,
+                "p_idx": 2,
+                "s_idx": 2,
+                "type": "word"
+            },
+            {
+                "word": "customers!",
+                "status": 4,
+                "p_idx": 2,
+                "s_idx": 2,
+                "type": "word"
+            }
+        ]
+    ],
+    [
+        [
+            {
+                "word": "The",
+                "status": 6,
+                "p_idx": 3,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "customers",
+                "status": 4,
+                "p_idx": 3,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "are",
+                "status": 6,
+                "p_idx": 3,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "from",
+                "status": 6,
+                "p_idx": 3,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "many",
+                "status": 6,
+                "p_idx": 3,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "countries!",
+                "status": 4,
+                "p_idx": 3,
+                "s_idx": 0,
+                "type": "word"
+            }
+        ]
+    ],
+    [
+        [
+            {
+                "word": "They",
+                "status": 6,
+                "p_idx": 4,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "speak",
+                "status": 6,
+                "p_idx": 4,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "many",
+                "status": 6,
+                "p_idx": 4,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "different",
+                "status": 6,
+                "p_idx": 4,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "languages!",
+                "status": 4,
+                "p_idx": 4,
+                "s_idx": 0,
+                "type": "word"
+            }
+        ]
+    ],
+    [
+        [
+            {
+                "word": "Mike",
+                "status": 0,
+                "p_idx": 5,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "can",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "meet",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "word": "many",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 0,
+                "type": "word"
+            },
+            {
+                "phrase": [
+                    {
+                        "word": "friendly",
+                        "status": 5,
+                        "p_idx": 5,
+                        "s_idx": 0,
+                        "type": "word"
+                    },
+                    {
+                        "word": "people?",
+                        "status": 6,
+                        "p_idx": 5,
+                        "s_idx": 0,
+                        "type": "word"
+                    }
+                ],
+                "status": 4,
+                "p_idx": 5,
+                "s_idx": 0,
+                "type": "phrase"
+            }
+        ],
+        [
+            {
+                "word": "Mike",
+                "status": 0,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "is",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "happy",
+                "status": 5,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "when",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "he",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "talks",
+                "status": 5,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "to",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "the",
+                "status": 6,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            },
+            {
+                "word": "customers.",
+                "status": 4,
+                "p_idx": 5,
+                "s_idx": 1,
+                "type": "word"
+            }
+        ]
+    ]
+]

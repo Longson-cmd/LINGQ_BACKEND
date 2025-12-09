@@ -6,7 +6,7 @@ from core.views.upload_audio import upload_audio, create_timestamp
 from core.views.get_lesson import get_lesson
 
 urlpatterns = [
-    path("api/register/", register_user, name = 'signup'),
+    path("register/", register_user, name = 'signup'),
     path("login/", login_user, name = 'login'),
     path("upload_text/", upload_text, name = "upload_text"),
     path("upload_audio/", upload_audio, name="upload_audio"),
