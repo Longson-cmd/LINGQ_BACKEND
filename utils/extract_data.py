@@ -82,11 +82,17 @@ def get_lists_txt(txt_path):
     list_id = []   # list of tuples: (word, (word_index, sentence_index))
     list_ref = []  # list of cleaned words only
 
+    count_sentence = 0
     for p_idx, paragraph in enumerate(two_dimention_sentence_list):
+
         for s_idx, sentence in enumerate(paragraph):
-            for word in sentence.split():
-                list_id.append((word, (p_idx, s_idx)))
+            sentence_idx = count_sentence + s_idx
+            for idx_in_s, word in enumerate(sentence.split()):
+                list_id.append((word, (p_idx, sentence_idx, idx_in_s)))
                 list_ref.append(clean_word(word))
+
+        count_sentence += len(paragraph)
+    print('total number of sentences', count_sentence)
 
     # Wrap into dictionary for export
     return list_ref, list_id
@@ -95,6 +101,7 @@ def get_lists_txt(txt_path):
     # 3. Process Whisper transcription result
     # ======================================
 def get_lists_whisper(whisper_path):
+
     # Load Whisper JSON file
     with open(whisper_path, encoding='utf-8') as f:
         data = json.load(f)['segments']
@@ -125,3 +132,12 @@ def get_lists_whisper(whisper_path):
             )
 
     return  whisper_wordtimestamp, whisper
+
+
+if __name__ == "__main__":
+    import json
+    txt_path = r'C:\Users\PC\Desktop\temporarily\practise\lingq\media\documents\test@example.com\test0txt'
+    list_ref, list_id = get_lists_txt(txt_path)
+    
+    with open('check_text_file', 'w', encoding='utf-8') as file:
+        json.dump(list_id, file,  indent=4)

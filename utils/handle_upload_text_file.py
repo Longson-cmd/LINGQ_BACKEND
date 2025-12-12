@@ -62,10 +62,19 @@ def create_lesson(request, txt_path):
             'w_idx' : word_idx,
             "p_idx" : item[1][0],
             "s_idx" : item[1][1],
-            "type" : 'word'
+            "idx_w_in_s": item[1][2],
+            "type" : 'word',
+           
         })
 
     group_by_sentence = group_by_para_or_sentence(list_words_in_lesson, "s_idx")
+    
+    list_sentences = []
+    for items in group_by_sentence:
+        list_words = [w['word'] for w in items]
+        sentence = ' '.join(list_words)
+        list_sentences.append(sentence)
+
     for items_in_sentence in group_by_sentence:
         sentence_list = [clean_word(item.get("word")) for item in items_in_sentence]
         for phrase_list, phrase_status in phrase_lists:
@@ -97,10 +106,11 @@ def create_lesson(request, txt_path):
     for items_in_sentence in group_by_sentence:
         list_words_in_lesson.extend(items_in_sentence)
 
+    # group_by_para = group_by_para_or_sentence(list_words_in_lesson, "p_idx")
+    # group_by_para_sentence = [group_by_para_or_sentence(item, "s_idx") for item in group_by_para]
     group_by_para = group_by_para_or_sentence(list_words_in_lesson, "p_idx")
-    group_by_para_sentence = [group_by_para_or_sentence(item, "s_idx") for item in group_by_para]
-
-    return group_by_para_sentence
+  
+    return group_by_para, list_sentences
 
 # ---------- EPUB ----------     
 def convert_epub_to_txt(uploaded_file):

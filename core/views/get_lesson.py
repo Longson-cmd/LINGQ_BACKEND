@@ -19,9 +19,9 @@ def get_lesson(request):
         print("get uploadedtext object :",  uploadedtext_obj.file_name)
 
         txt_path = uploadedtext_obj.file.path
-        lesson_data = create_lesson(request, txt_path)
+        lesson_data, list_sentences = create_lesson(request, txt_path)
         #content as a python list
-        return JsonResponse(lesson_data, safe=False)
+        return JsonResponse({"lesson_data" : lesson_data, "list_sentences" : list_sentences}, safe=False)
     except Exception as e:
         print("❌ Exception occurred:", e)
         traceback.print_exc()
