@@ -4,6 +4,8 @@ from core.views.auth import register_user, login_user
 from core.views.upload_text import upload_text
 from core.views.upload_audio import upload_audio, create_timestamp
 from core.views.get_lesson import get_lesson
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("register/", register_user, name = 'signup'),
@@ -14,3 +16,10 @@ urlpatterns = [
     path("get_lesson/" , get_lesson, name= "get_lesson"),
     path("admin/", admin.site.urls)
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
