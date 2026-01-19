@@ -107,6 +107,11 @@ class Words(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.word_key}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'word_key'], name = "uniqu_words_word_word_key")
+        ]
     
 class Word_Meanings(models.Model):
     word = models.ForeignKey(Words, on_delete= models.CASCADE)
@@ -115,6 +120,10 @@ class Word_Meanings(models.Model):
 
     def __str__(self):
         return f"{self.word} - {self.meaning[:20]}"
+    class Meta: 
+        constraints = [
+            models.UniqueConstraint(fields=['word', 'meaning'], name="uniq_word_word_meaning")
+        ]
     
 
 class Word_Tags(models.Model):
@@ -124,6 +133,11 @@ class Word_Tags(models.Model):
 
     def __str__(self):
         return f"{self.word} - {self.tag}"
+    
+    class Meta: 
+        constraints = [
+            models.UniqueConstraint(fields= ['word', 'tag'], name="uniq_word_tag")
+        ]
 
 class Phrases(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -135,6 +149,12 @@ class Phrases(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.phrase}"
     
+    class Meta:
+        constraints= [
+            models.UniqueConstraint(fields= ['user', 'phrase'], name = "uniq_phrase_user_phrase")
+        ]
+
+    
 class Phrase_Meanings(models.Model):
     phrase = models.ForeignKey(Phrases, on_delete=models.CASCADE)
 
@@ -143,12 +163,20 @@ class Phrase_Meanings(models.Model):
     def __str__(self):
         return f"{self.phrase} - {self.meaning[:20]}"
     
+    class Meta:
+        constraints= [
+            models.UniqueConstraint(fields = ["phrase", "meaning"], name= "uniq_phrase_meaning")
+        ]
+    
 class Phrase_Tags(models.Model):
     phrase = models.ForeignKey(Phrases, on_delete=models.CASCADE)
 
     tag = models.CharField(max_length=20)
 
-    
-
     def __str__(self):
         return f"{self.phrase} - {self.tag}"
+    
+    class Meta:
+        constraints= [
+            models.UniqueConstraint(fields = ['phrase', 'tag'], name = "uniq_phrase_tag")
+        ]

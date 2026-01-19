@@ -88,7 +88,7 @@ def get_lists_txt(txt_path):
         for s_idx, sentence in enumerate(paragraph):
             sentence_idx = count_sentence + s_idx
             for idx_in_s, word in enumerate(sentence.split()):
-                list_id.append((word, (p_idx, sentence_idx, idx_in_s)))
+                list_id.append((word, p_idx, sentence_idx, idx_in_s))
                 list_ref.append(clean_word(word))
 
         count_sentence += len(paragraph)
@@ -100,6 +100,7 @@ def get_lists_txt(txt_path):
     # ======================================
     # 3. Process Whisper transcription result
     # ======================================
+    
 def get_lists_whisper(whisper_path):
 
     # Load Whisper JSON file

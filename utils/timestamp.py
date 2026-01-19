@@ -196,7 +196,7 @@ def get_sentence_timestamp(txt_path, whisper_path):
     # Step 2: Assign timestamps at word level
     timestamp_word_level = []
     for i, item in enumerate(list_id):
-        word, (p_idx, s_idx) = item
+        word, p_idx, s_idx, idx_in_s = item
         matched_flag, matched_whisper_idx = needleman_result[i][1], needleman_result[i][2]
 
         if matched_flag == 1:
@@ -278,23 +278,3 @@ if __name__ == "__main__":
         json.dump(timestamp_result, file, indent=2)
 
 
-
-
-# def create_lesson(request, content):
-#     list_ref, list_id = get_lists_txt(content)
-#     list_words_in_lesson = []
-
-#     words_qs = Words.objects.filter(user = request.user)
-#     status_dict = {w.word_key : w.word_status for w in words_qs}
-   
-#     for item in list_id:
-#         list_words_in_lesson.append({
-#             "word" : item[0],
-#             "status" : status_dict.get(item[0], 6),
-#             "p_idx" : item[1][0],
-#             "s_idx" : item[1][1]
-#         })
-#     group_by_para = group_by_para_or_sentence(list_words_in_lesson, "p_idx")
-#     group_by_para_sentence = [group_by_para_or_sentence(item, "s_idx") for item in group_by_para]
-
-#     return group_by_para_sentence

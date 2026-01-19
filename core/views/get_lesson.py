@@ -20,7 +20,7 @@ def get_lesson(request):
         print("get uploadedtext object :",  uploadedtext_obj.file_name)
 
         txt_path = uploadedtext_obj.file.path
-        lesson_data, list_sentences, Tags_Meanings = create_lesson(request, txt_path)
+        lesson_data, list_sentences, Tags_Meanings, core_data = create_lesson(request, txt_path)
 
 
         audio_list = []
@@ -40,7 +40,8 @@ def get_lesson(request):
             "lesson_data": lesson_data,
             "list_sentences": list_sentences,
             "Tags_Meanings" : Tags_Meanings,
-            "audios": audio_list
+            "audios": audio_list,
+            "core_data": core_data
         }, safe=False)
     
         
