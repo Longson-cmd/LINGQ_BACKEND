@@ -7,8 +7,6 @@ from .models import (
     Phrase_Meanings,
     Phrase_Tags,
     Lessons,
-    UploadedAudios,
-    UploadedText,
     CustomerProfile,
 )
 
@@ -20,6 +18,4 @@ admin.site.register(Phrases)
 admin.site.register(Phrase_Meanings)
 admin.site.register(Phrase_Tags)
 admin.site.register(Lessons)
-admin.site.register(UploadedAudios)
-admin.site.register(UploadedText)
 admin.site.register(CustomerProfile)

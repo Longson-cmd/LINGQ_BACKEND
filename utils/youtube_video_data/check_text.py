@@ -1,12 +1,12 @@
 
 import json
+# from utils.extract_data import get_lists_from_text
+
+import json
 import re
 import unicodedata
 
 
-# ======================================
-# 1. Load and preprocess raw text
-# ======================================
 
 def clean_word(word: str) -> str:
     """
@@ -70,36 +70,6 @@ def get_sentence_lists(text: str):
     return  two_dimention_sentence_list
 
 
-
-def get_lists_txt(txt_path):
-    # ======================================
-    # 2. Build cleaned reference data
-    # ======================================
-    # Read text file
-    with open(txt_path, "r", encoding="utf-8") as f:
-        text = f.read()
-    # Generate sentence lists
-    two_dimention_sentence_list = get_sentence_lists(text)
-    list_id = []   # list of tuples: (word, (word_index, sentence_index))
-    list_ref = []  # list of cleaned words only
-
-    count_sentence = 0
-    for p_idx, paragraph in enumerate(two_dimention_sentence_list):
-
-        for s_idx, sentence in enumerate(paragraph):
-            sentence_idx = count_sentence + s_idx
-            for idx_in_s, word in enumerate(sentence.split()):
-                list_id.append((word, p_idx, sentence_idx, idx_in_s))
-                list_ref.append(clean_word(word))
-
-        count_sentence += len(paragraph)
-    print('total number of sentences', count_sentence)
-
-    # Wrap into dictionary for export
-    return list_ref, list_id
-
-
-
 def get_lists_from_text(text):
     # Generate sentence lists
     two_dimention_sentence_list = get_sentence_lists(text)
@@ -124,45 +94,14 @@ def get_lists_from_text(text):
     # ======================================
     # 3. Process Whisper transcription result
     # ======================================
-    
-def get_lists_whisper(whisper_path):
+   
 
-    # Load Whisper JSON file
-    with open(whisper_path, encoding='utf-8') as f:
-        data = json.load(f)['segments']
-
-    whisper_wordtimestamp = []  # list of word timestamp dictionaries
-    whisper = []                # list of cleaned words
-
-    for item in data:
-        start_sentence = item["start"]
-        end_sentence = item["end"]
-        list_words = [clean_word(w) for w in item["text"].split()]
-
-        # If Whisper provides a segment with no words, assign a default gap
-        if len(list_words) != 0:
-            gap = (end_sentence - start_sentence) / len(list_words)
-        else:
-            gap = 1
-
-        # Distribute timestamps evenly across words in the segment
-        for i, word in enumerate(list_words):
-            whisper.append(word)
-            whisper_wordtimestamp.append(
-                {
-                    "word": word,
-                    "start": round(start_sentence + gap * i, 2),
-                    "end": round(start_sentence + gap * (i + 1), 2),
-                }
-            )
-
-    return  whisper_wordtimestamp, whisper
+text_file_path = r"C:\Users\PC\Desktop\practise\lingq\test\test0.txt"
+with open(text_file_path, 'r', encoding='utf-8') as f:
+        text = f.read()
+list_ref, list_id = get_lists_from_text(text)
+json_data = {"list_ref": list_ref, "list_id" : list_id}
 
 
-if __name__ == "__main__":
-    import json
-    txt_path = r'C:\Users\PC\Desktop\temporarily\practise\lingq\media\documents\test@example.com\test0txt'
-    list_ref, list_id = get_lists_txt(txt_path)
-    
-    with open('check_text_file', 'w', encoding='utf-8') as file:
-        json.dump(list_id, file,  indent=4)
+with open("check_json_text.json", 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, ensure_ascii=False, indent=2)

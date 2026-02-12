@@ -6,11 +6,11 @@ from docx import Document
 import chardet
 import io
 from core.models import Words, Phrases
-from utils.extract_data import get_lists_txt, clean_word
+from utils.extract_data import clean_word
 import json
 from utils.paths import BASE_DIR
 import os
-from itertools import groupby
+
 
 print('BASE_DIR', BASE_DIR)
 dict_path = os.path.join(BASE_DIR, 'Dictionary.json')
@@ -42,7 +42,8 @@ def group_by_para_or_sentence(timestamp_word_level, group_type):
             current_object.append(word)
         else:
             # Start a new group
-            words_in_the_same_type.append(current_object)
+            if current_object:
+                words_in_the_same_type.append(current_object)
             current_idx = word[group_type]
             current_object = [word]
 
@@ -54,8 +55,7 @@ def group_by_para_or_sentence(timestamp_word_level, group_type):
 # def check_phrase_in_sentence(list_sentence, list_phrase):
 
 
-def create_lesson(request, txt_path):
-    list_ref, list_id = get_lists_txt(txt_path)
+def create_lesson(request, list_ref, list_id):
     list_words_in_lesson = []
     list_phrases_in_text = []
 
@@ -79,11 +79,11 @@ def create_lesson(request, txt_path):
         })
 
 
-    group_by_sentence = group_by_para_or_sentence(list_words_in_lesson, "s_idx")
     core_data_group_by_para = group_by_para_or_sentence(list_words_in_lesson, "p_idx")
     # group by para, then group by sentence
     core_data_group_by_para_and_sentence = [group_by_para_or_sentence(item, "s_idx") for item in core_data_group_by_para]
     # ---------------GET LIST SENTENCE---------------
+    group_by_sentence = group_by_para_or_sentence(list_words_in_lesson, "s_idx")
     list_sentences = []
     for items in group_by_sentence:
         list_words = [w['word'] for w in items]
@@ -200,7 +200,7 @@ def create_lesson(request, txt_path):
     return group_by_para, list_sentences, Tags_Meanings, core_data_group_by_para_and_sentence
 
 # ---------- EPUB ----------     
-def convert_epub_to_txt(uploaded_file):
+def convert_epub_to_text(uploaded_file):
     uploaded_file.seek(0)
 
     book = epub.read_epub(io.BytesIO(uploaded_file.read()))
@@ -212,36 +212,36 @@ def convert_epub_to_txt(uploaded_file):
     return "\n".join(texts)
 
 # ---------- PDF ----------\
-def convert_pdf_to_txt(uploaded_file):
+def convert_pdf_to_text(uploaded_file):
     uploaded_file.seek(0)
     text = extract_text(io.BytesIO(uploaded_file.read()))
     return text
 
 # ---------- DOCX ----------
-def convert_docx_to_txt(uploaded_file):
+def convert_docx_to_text(uploaded_file):
     uploaded_file.seek(0)
     doc  = Document(io.BytesIO(uploaded_file.read()))
     return "\n".join([p.text for p in doc.paragraphs])
 
 # ---------- TXT ----------
-def convert_txt_to_txt(uploaded_file):
+def convert_txt_to_text(uploaded_file):
     uploaded_file.seek(0)  
     raw_data = uploaded_file.read()
     encoding = chardet.detect(raw_data)["encoding"] or "utf-8"
     return raw_data.decode(encoding, errors="ignore")
 
-def convert_input_to_txt(uploaded_file):
+def convert_input_to_text(uploaded_file):
     filename = uploaded_file.name
     ext = os.path.splitext(filename)[1].lower()
 
     if ext == ".epub":
-        content = convert_epub_to_txt(uploaded_file)
+        content = convert_epub_to_text(uploaded_file)
     elif ext == ".pdf":
-        content = convert_pdf_to_txt(uploaded_file)
+        content = convert_pdf_to_text(uploaded_file)
     elif ext == ".docx":
-        content = convert_docx_to_txt(uploaded_file)
+        content = convert_docx_to_text(uploaded_file)
     elif ext == ".txt":
-        content = convert_txt_to_txt(uploaded_file)
+        content = convert_txt_to_text(uploaded_file)
     else:
         raise ValueError(f"[⚠] Unsupported format: {ext}")
     print(f"[✔] Converted {ext} file → txt")

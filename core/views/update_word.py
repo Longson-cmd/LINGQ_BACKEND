@@ -12,6 +12,7 @@ def is_word(text):
         return False
     
 
+
 @csrf_exempt
 @login_required
 def update_word(request):

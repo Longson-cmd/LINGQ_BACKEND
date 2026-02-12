@@ -40,66 +40,61 @@ class CustomerProfile(models.Model):
         else:
             print("This is a free account")
 
- 
-def upload_text_path(instance, filename):
-    return f"documents/{instance.lesson.user.username}/{filename}"
+def upload_course_file(instance, filename):
+    return f"{instance.user.username}/{filename}"
+    
+class Courses(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-def upload_audio_path(instance, filename):
-    return f"audios/{instance.lesson.user.username}/{filename}"
+    course_name = models.CharField(max_length=100)
 
-def upload_whisper_result(instance, filename):
-    return f"whisper/{instance.lesson.user.username}/{filename}"
+    last_open_at = models.DateTimeField(null = True, blank=True)
 
-def timestamp_path(instance, filename):
-    return f"timestamps/{instance.user.username}/{filename}"
+    course_img_file = models.FileField(upload_to= upload_course_file, null = True, blank=True)
 
+    def __str__(self):
+        return self.course_name
+    
+def upload_lesson_file(instance, filename):
+    return f"{instance.course.user.username}/{filename}"
 
 class Lessons(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE)
+
+
     lesson_name = models.CharField(max_length=100)
-    uploaded_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    timestamp_file = models.FileField(upload_to=timestamp_path, null=True, blank=True)
-  
-    def __str__(self):
-        return self.lesson_name
-    
-class UploadedAudios(models.Model):
-    lesson = models.ForeignKey(Lessons, on_delete=models.CASCADE)
+
+    last_open_at = models.DateTimeField(null = True, blank=True)
+
+    youtube_url = models.CharField(max_length=255, null = True, blank=True)
+
+    text_file = models.FileField(upload_to=upload_lesson_file)
+
+    lesson_img_file = models.FileField(upload_to=upload_lesson_file, null=True, blank=True)
 
     has_audio = models.BooleanField(default=False)
 
-    has_whisper_result = models.BooleanField(default=False)
+    audio_file = models.FileField(upload_to=upload_lesson_file, null=True, blank=True)
 
-    file_name = models.CharField(max_length=255,  null = True, blank=True)
+    has_timestamp = models.BooleanField(default=False)
 
-    file = models.FileField(upload_to=upload_audio_path,  null = True, blank=True)
+    whisper_file = models.FileField(upload_to=upload_lesson_file, null=True, blank=True)
 
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    whisper_file_name = models.CharField(max_length=255, null = True, blank=True)
-
-    whisper_file = models.FileField(upload_to=upload_whisper_result, null = True, blank=True)
+    timestamp_file = models.FileField(upload_to=upload_lesson_file, null=True, blank=True)
 
     def __str__(self):
-        return self.file_name or "No file name"
-
-class UploadedText(models.Model):
-    lesson = models.ForeignKey(Lessons, on_delete= models.CASCADE)
-
-    file_name = models.CharField(max_length=255)
-
-    file = models.FileField(upload_to=upload_text_path)
-
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.file_name
+        return self.lesson_name
     
-
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["course", 'lesson_name'], name= 'uniq_course_lesson_name')
+        ]
 
 
 class Words(models.Model):
     user = models.ForeignKey(User, on_delete= models.CASCADE)
+
+    updated_at = models.DateTimeField(auto_now=True)  # 👈 important
 
     word_key = models.CharField(max_length=50)
 
