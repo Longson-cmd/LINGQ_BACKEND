@@ -1,25 +1,30 @@
 FROM python:3.11-slim
-# Environment variables
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-
-# Set working directory
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y gcc default-libmysqlclient-dev pkg-config
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt /app/
+COPY requirements.txt .
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
-COPY . /app/
+# Copy project
+COPY . .
+
+# Collect static files (important)
 
 
-# Let Severs know which port to expose
 EXPOSE 8000
 
-# Run Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Production server
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn lingq.wsgi:application --bind 0.0.0.0:8000"]
+
