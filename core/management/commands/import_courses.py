@@ -10,6 +10,7 @@ from utils.handle_upload_text_file import convert_input_to_text
 from utils.extract_data import get_lists_from_text
 import json
 
+
 course_names = [
     "IELTS Speaking Foundations",
     "IELTS Speaking Part 1 Mastery",
@@ -36,8 +37,12 @@ lesson_names = [
     "Common Grammar Mistakes in Speaking"
 ]
 
-lesson_img_path = r"C:\Users\PC\Desktop\practise\lingq\test\lesson.jpg"
-course_img_path = r"C:\Users\PC\Desktop\practise\lingq\test\course.jpg"
+# lesson_img_path = r"C:\Users\PC\Desktop\practise\lingq\test\lesson.jpg"
+# course_img_path = r"C:\Users\PC\Desktop\practise\lingq\test\course.jpg"
+lesson_img_path = os.path.join(settings.BASE_DIR, 'test', 'lesson.jpg')
+course_img_path = os.path.join(settings.BASE_DIR, 'test', 'course.jpg')
+
+
 
 
 def get_text_file_path(file_name):
