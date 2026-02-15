@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from utils.handle_upload_text_file import create_lesson
-from utils.handle_youtube_url import get_timestamp
+from utils.handle_youtube_url import get_timestamp, get_thumbnail_url
 from utils.extract_data import get_lists_from_text
 from utils.handle_upload_text_file import convert_input_to_text
 from django.views.decorators.csrf import csrf_exempt
@@ -10,7 +10,7 @@ import traceback
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
-from yt_dlp import YoutubeDL
+# from yt_dlp import YoutubeDLyt_dlp
 import requests
 import os
 from urllib.parse import urlparse
@@ -105,11 +105,6 @@ def delete_lesson(request):
 
 
 
-def get_thumbnail_url(url):
-    with YoutubeDL({"quiet": True, "no_warnings":True}) as ydl:
-        info = ydl.extract_info(url, download=False)
-        return info.get("thumbnail")
-    
 
 def save_thumbnail_to_lesson(lesson, thumbnail_url):
     response = requests.get(thumbnail_url, timeout=10)
@@ -172,9 +167,9 @@ def create_youtube_lesson(request):
         # traceback.print_exc()
         return JsonResponse({'message': str(e)}, status = 500)
 
-    thumbnail = get_thumbnail_url(youtube_url)
-    if thumbnail:
-        save_thumbnail_to_lesson(lesson, thumbnail)
+    # thumbnail = get_thumbnail_url(youtube_url)
+    # if thumbnail:
+    #     save_thumbnail_to_lesson(lesson, thumbnail)
     return JsonResponse({
         "message": "Successfully created new lesson!",
         "lesson_name": lesson_name,

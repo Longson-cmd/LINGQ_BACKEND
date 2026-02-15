@@ -8,6 +8,10 @@ if [ -d "core/migrations" ]; then
     rm -rf core/migrations
 fi
 
+source venv/bin/activate
+
+
+
 # 2️⃣ Run migrations
 echo "Making migrations..."
 python manage.py makemigrations core
@@ -31,5 +35,10 @@ python manage.py import_courses
 # python manage.py runserver 0.0.0.0:8000
 
 
+
 # chmod +x run.sh
 # ./run.sh
+# chmod +x run.sh; ./run.sh
+
+
+# git config --global core.autocrlf false; git add .gitattributes; git add --renormalize  ;git commit -m "Fix line endings"
