@@ -64,7 +64,23 @@ def caculate_specification(set_words, set_phrases, status_word_dict, status_phra
 def get_data_cards(request):
     if request.method != 'GET':
         return JsonResponse({'message' : 'Invalid request !'}, status = 405)
+    try:
+        print("✅ PATH:", request.path)
+        print("✅ AUTH:", request.user.is_authenticated, repr(request.user))
+        print("✅ USER_ID:", getattr(request.user, "id", None))
+        print("✅ USERNAME:", getattr(request.user, "username", None))
+        print("✅ COOKIES:", dict(request.COOKIES))
+        print("✅ SESSION_KEY:", request.session.session_key)
 
+        if not request.user.is_authenticated:
+            return JsonResponse({"message": "Not authenticated"}, status=401)
+
+        # ... continue with your real logic here ...
+
+    except Exception as e:
+        print("🔥 ERROR:", repr(e))
+        traceback.print_exc()
+        return JsonResponse({"error": str(e)}, status=500)
     # Get status dicts
     status_word_dict, status_phrase_dict, list_all_phrases = get_dict_status(request.user)
 
