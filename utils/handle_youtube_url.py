@@ -47,6 +47,10 @@ def get_timestamp(url):
             # Output template:
             # Save subtitles inside the temp folder using video ID as filename
             # Example: <tmpdir>/ePMDcfFO9cw.en.vtt
+
+                    # 🔴 CRITICAL FIXES
+            "cookiefile": "/home/ec2-user/cookies.txt",
+            "js_runtimes": ["node"],
             "subtitleslangs": [chosen_lang],
             "outtmpl": os.path.join(tmpdir, "%(id)s.%(lang)s.%(ext)s"),
         }
@@ -80,12 +84,27 @@ def get_timestamp(url):
     return list_time_stamp, json_dict, info['id'], info.get("title").strip().replace(" ", "_")
     
 
+# def get_thumbnail_url(url):
+#     with YoutubeDL({"quiet": True, "no_warnings":True}) as ydl:
+#         info = ydl.extract_info(url, download=False)
+#         return info.get("thumbnail")
 def get_thumbnail_url(url):
-    with YoutubeDL({"quiet": True, "no_warnings":True}) as ydl:
+    ydl_opts = {
+        "quiet": True,
+        "no_warnings": True,
+
+        # 🔴 Critical for AWS
+        "cookiefile": "/home/ec2-user/cookies.txt",
+        "js_runtimes": ["node"],
+
+        # We are not downloading anything
+        "skip_download": True,
+    }
+
+    with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
         return info.get("thumbnail")
-    
-    
+
 if __name__ == "__main__":
     url = "https://www.youtube.com/watch?v=ePMDcfFO9cw"
 
