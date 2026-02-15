@@ -50,6 +50,8 @@ def get_lesson_sets(lesson_obj,  list_all_phrases):
     total_words = len(list_ref)
     return set_words, set_phrases, total_words
 
+
+
 def caculate_specification(set_words, set_phrases, status_word_dict, status_phrase_dict):
     number_newwords = sum(1 for w in set_words if w not in status_word_dict)
     number_lingq = sum(1 for w in set_words if 0 < status_word_dict.get(w, 6) < 4 ) + sum(1 for p in set_phrases if status_phrase_dict.get(p) < 4)
@@ -57,7 +59,8 @@ def caculate_specification(set_words, set_phrases, status_word_dict, status_phra
     newword_percents = math.ceil(number_newwords / len(set_words) * 100) if len(set_words)> 0 else 0
     return number_newwords, number_lingq, number_knownwords, newword_percents
 
-@login_required
+@csrf_exempt
+# @login_required
 def get_data_cards(request):
     if request.method != 'GET':
         return JsonResponse({'message' : 'Invalid request !'}, status = 405)
@@ -132,6 +135,8 @@ def get_data_cards(request):
         "dataCourseCards" : dataCourseCards
     })
 
+
+@csrf_exempt
 @login_required
 def get_list_courses(request):
     if request.method != 'GET':
@@ -153,7 +158,7 @@ def get_list_courses(request):
         'listCourse' : list_course
     }, status = 200)
 
-
+@csrf_exempt
 @login_required
 def show_course_infos(request):
     if request.method != 'GET':
