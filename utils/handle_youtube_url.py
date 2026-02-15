@@ -50,7 +50,13 @@ def get_timestamp(url):
 
                     # 🔴 CRITICAL FIXES
             "cookiefile": "/home/ec2-user/cookies.txt",
-            "js_runtimes": ["node"],
+            # ✅ CORRECT FORMAT FOR PYTHON
+            "js_runtimes": {
+                "node": {
+                    "path": "/usr/bin/node"
+                }
+            },
+
             "subtitleslangs": [chosen_lang],
             "outtmpl": os.path.join(tmpdir, "%(id)s.%(lang)s.%(ext)s"),
         }
@@ -95,7 +101,13 @@ def get_thumbnail_url(url):
 
         # 🔴 Critical for AWS
         "cookiefile": "/home/ec2-user/cookies.txt",
-        "js_runtimes": ["node:/usr/bin/node"],
+        # ✅ CORRECT FORMAT FOR PYTHON
+        "js_runtimes": {
+            "node": {
+                "path": "/usr/bin/node"
+            }
+        },
+
 
         # We are not downloading anything
         "skip_download": True,
