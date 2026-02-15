@@ -10,7 +10,7 @@ import traceback
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
-# from yt_dlp import YoutubeDLyt_dlp
+
 import requests
 import os
 from urllib.parse import urlparse
@@ -104,7 +104,7 @@ def delete_lesson(request):
         return JsonResponse({'message': f'There is a problem with deleting {lesson_name} lesson'}, status = 404)
 
 
-
+    
 
 def save_thumbnail_to_lesson(lesson, thumbnail_url):
     response = requests.get(thumbnail_url, timeout=10)
@@ -167,9 +167,9 @@ def create_youtube_lesson(request):
         # traceback.print_exc()
         return JsonResponse({'message': str(e)}, status = 500)
 
-    # thumbnail = get_thumbnail_url(youtube_url)
-    # if thumbnail:
-    #     save_thumbnail_to_lesson(lesson, thumbnail)
+    thumbnail = get_thumbnail_url(youtube_url)
+    if thumbnail:
+        save_thumbnail_to_lesson(lesson, thumbnail)
     return JsonResponse({
         "message": "Successfully created new lesson!",
         "lesson_name": lesson_name,
