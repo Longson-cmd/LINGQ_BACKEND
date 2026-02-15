@@ -95,7 +95,7 @@ def get_thumbnail_url(url):
 
         # 🔴 Critical for AWS
         "cookiefile": "/home/ec2-user/cookies.txt",
-        "js_runtimes": ["node"],
+        "js_runtimes": ["node:/usr/bin/node"],
 
         # We are not downloading anything
         "skip_download": True,
