@@ -157,7 +157,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # your Nuxt frontend
     "http://127.0.0.1:3000",
-    "http://3.26.146.123:3000"
+    "http://3.26.146.123:3000",
+    "https://lingq-home-page.vercel.app",
 
 ]
 
@@ -165,16 +166,23 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",  # your Nuxt frontend
     "http://127.0.0.1:3000",
-    "http://3.26.146.123:3000"
+    "http://3.26.146.123:3000",
+     "https://lingq-home-page.vercel.app"
 ]
 
 
-SESSION_COOKIE_SAMESITE = "Lax"
-SESSION_COOKIE_SECURE = False
+# SESSION_COOKIE_SAMESITE = "Lax"
+# CSRF_COOKIE_SAMESITE = "Lax"
 
-CSRF_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SECURE = False
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = False
 
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
 
 
 
