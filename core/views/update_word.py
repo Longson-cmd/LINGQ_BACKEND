@@ -18,7 +18,8 @@ def is_word(text):
 def update_word(request):
     if request.method != "PUT":
         return JsonResponse({"message" : "Invaid request method!"}, status=405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     try:
         data = json.loads(request.body.decode("utf-8"))
         print('data text: ', data.get('phrase', ''))
@@ -95,7 +96,8 @@ def update_word(request):
 def finish_lesson(request):
     if request.method != "PUT":
         return JsonResponse({"message": "Invalid method"}, status = 405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     data = json.loads(request.body.decode("utf-8"))
     list_words_update = []
     for key, value in data.items():  

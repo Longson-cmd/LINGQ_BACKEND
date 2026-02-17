@@ -8,7 +8,8 @@ import json
 def create_course(request):
     if request.method != "POST":
         return JsonResponse({"message": " Invalid request!"}, status = 405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     course_name = request.POST.get('course_name', "").strip()
     picture_file = request.FILES.get("course_picture")
 
@@ -29,6 +30,8 @@ def create_course(request):
 def delete_course(request):
     if request.method != 'DELETE':
         return JsonResponse({'message': 'Invalid request!'}, status = 405)
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     data = json.loads(request.body)
     course_name = data.get('course_name', '').strip()
     print('course_name', course_name)

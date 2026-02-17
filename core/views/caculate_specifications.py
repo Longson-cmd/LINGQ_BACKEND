@@ -81,6 +81,9 @@ def get_data_cards(request):
         print("🔥 ERROR:", repr(e))
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+
     # Get status dicts
     status_word_dict, status_phrase_dict, list_all_phrases = get_dict_status(request.user)
 
@@ -158,6 +161,9 @@ def get_list_courses(request):
     if request.method != 'GET':
         return JsonResponse({'message' : 'Invalid request!'}, status = 405)
     
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+    
     course_objs = Courses.objects.filter(user = request.user)
     list_course  = []
     for course in course_objs:
@@ -169,6 +175,7 @@ def get_list_courses(request):
             'name': name,
             'url': url
         })
+    print('list_course', list_course)
 
     return JsonResponse({
         'listCourse' : list_course

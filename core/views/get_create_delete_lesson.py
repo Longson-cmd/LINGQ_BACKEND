@@ -87,6 +87,8 @@ def get_lesson(request):
 def delete_lesson(request):
     if request.method != 'POST':
         return JsonResponse({"message" : "Invalid request!"}, status = 405)
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     
     data = json.loads(request.body.decode('utf-8') or '{}')
     lesson_name = data.get('lesson_name', '').strip()
@@ -123,7 +125,8 @@ def save_thumbnail_to_lesson(lesson, thumbnail_url):
 def create_youtube_lesson(request):
     if request.method != "POST":
         return JsonResponse({"message" : "Invalid request !"}, status = 405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     data = json.loads(request.body)
     course_name = data.get("course_name", "default").strip()
     youtube_url = data.get("youtube_url", "").strip()
@@ -183,7 +186,8 @@ def create_youtube_lesson(request):
 def create_lesson_manually(request):
     if request.method != "POST":
         return JsonResponse({'message' : 'Invalid request !'}, status = 405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     lesson_name = request.POST.get('lesson_name', "").strip()
     course_name = request.POST.get("course_name", "default").strip()
     input_text = request.POST.get("inputText", "").strip()

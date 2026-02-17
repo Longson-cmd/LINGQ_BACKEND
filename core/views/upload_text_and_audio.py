@@ -29,7 +29,8 @@ def generate_unique_filename(course_obj, basename):
 def upload_text(request):
     if request.method != 'POST':
         return JsonResponse({'message': 'Invalid request!'}, status = 405)
-
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     uploaded_file = request.FILES.get('file')
     if not uploaded_file:
         return JsonResponse({'message':'Missing uploaded file!'}, status = 400)
@@ -57,7 +58,8 @@ def upload_text(request):
 def upload_audio(request):
     if request.method != "POST":
         return JsonResponse({"message": "Invalid request"}, status = 405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     course_name = request.POST.get("course_name", "").strip()
     lesson_name = request.POST.get("lesson_name", "").strip()
     uploaded_file = request.FILES.get("file")
