@@ -4,7 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import traceback
 import json
+
+
 @login_required
+@csrf_exempt
 def create_course(request):
     if request.method != "POST":
         return JsonResponse({"message": " Invalid request!"}, status = 405)
