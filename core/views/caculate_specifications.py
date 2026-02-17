@@ -170,7 +170,7 @@ def get_list_courses(request):
         name = course.course_name
         url = '/images/course.jpg'
         if course.course_img_file:
-            url = request.build_absolute_uri(course.course_img_file)
+            url = request.build_absolute_uri(course.course_img_file.url)
         list_course.append({
             'name': name,
             'url': url
