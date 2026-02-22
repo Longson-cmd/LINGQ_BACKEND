@@ -49,13 +49,13 @@ def get_timestamp(url):
             # Example: <tmpdir>/ePMDcfFO9cw.en.vtt
 
                     # 🔴 CRITICAL FIXES
-            "cookiefile": "/home/ec2-user/cookies.txt",
+            # "cookiefile": "/home/ec2-user/cookies.txt",
             # ✅ CORRECT FORMAT FOR PYTHON
-            "js_runtimes": {
-                "node": {
-                    "path": "/usr/bin/node"
-                }
-            },
+            # "js_runtimes": {
+            #     "node": {
+            #         "path": "/usr/bin/node"
+            #     }
+            # },
 
             "subtitleslangs": [chosen_lang],
             "outtmpl": os.path.join(tmpdir, "%(id)s.%(lang)s.%(ext)s"),
@@ -100,13 +100,13 @@ def get_thumbnail_url(url):
         "no_warnings": True,
 
         # 🔴 Critical for AWS
-        "cookiefile": "/home/ec2-user/cookies.txt",
+        # "cookiefile": "/home/ec2-user/cookies.txt",
         # ✅ CORRECT FORMAT FOR PYTHON
-        "js_runtimes": {
-            "node": {
-                "path": "/usr/bin/node"
-            }
-        },
+        # "js_runtimes": {
+        #     "node": {
+        #         "path": "/usr/bin/node"
+        #     }
+        # },
 
 
         # We are not downloading anything

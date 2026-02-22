@@ -1,11 +1,13 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Lessons, Courses, Words, Phrases
+from core.models import Lessons, Courses, Words, Phrases, CustomerProfile
 from utils.handle_upload_text_file import group_by_para_or_sentence
 import json
 import traceback
 import math
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
 
 def get_dict_status(user):
     words_qs = Words.objects.filter(user = user)
@@ -64,6 +66,9 @@ def caculate_specification(set_words, set_phrases, status_word_dict, status_phra
 def get_data_cards(request):
     if request.method != 'GET':
         return JsonResponse({'message' : 'Invalid request !'}, status = 405)
+    if not request.user.is_authenticated:
+        return JsonResponse({"message": "Not authenticated"}, status=401)
+
     try:
         print("✅ PATH:", request.path)
         print("✅ AUTH:", request.user.is_authenticated, repr(request.user))
@@ -72,9 +77,7 @@ def get_data_cards(request):
         print("✅ COOKIES:", dict(request.COOKIES))
         print("✅ SESSION_KEY:", request.session.session_key)
 
-        if not request.user.is_authenticated:
-            return JsonResponse({"message": "Not authenticated"}, status=401)
-
+    
         # ... continue with your real logic here ...
 
     except Exception as e:
@@ -186,7 +189,9 @@ def get_list_courses(request):
 def show_course_infos(request):
     if request.method != 'GET':
         return JsonResponse({'message' : 'Invalid request!'}, status = 405)
-    
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'Not authenticated'}, status = 401)
+
     course_name = request.GET.get("course_name", '').strip()
 
     if not course_name:
@@ -245,6 +250,100 @@ def show_course_infos(request):
         "dataCourseCard" : dataCourseCard,
         "dataLessonCards" : dataLessonCards
     }) 
+
+
+@csrf_exempt
+@login_required
+def calculate_progress_data(request):
+    if request.method != "GET":
+        return JsonResponse({'message': 'Invalid request!'}, status = 400)
+    
+    if not request.user.is_authenticated:
+        return({'message': 'Authenticated required!'})
+    
+    user = request.user
+    user_daily_goal = CustomerProfile.objects.get(user = user).daily_goal
+    data_progress = []
+
+    user_weekly_goal = user_daily_goal * 7
+    user_monthly_goal = user_daily_goal * 30
+    user_three_month_goal = user_daily_goal * 90
+    
+    now = timezone.now()
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = start_of_day + timedelta(days=1)
+    daily_lingq_created = Words.objects.filter(user = user,created_at__gte=start_of_day, created_at__lt=end_of_day).exclude(word_status=0).count() + Phrases.objects.filter(user = user,created_at__gte=start_of_day, created_at__lt=end_of_day).count()
+    daily_known_words = Words.objects.filter(user = user,change_to_learn_at__gte = start_of_day, change_to_learn_at__lt = end_of_day ).exclude(word_status=0).count() + Phrases.objects.filter(user = user,change_to_learn_at__gte = start_of_day, change_to_learn_at__lt = end_of_day ).count()
+    data_progress.append({
+        'name': 'Today Activity',
+        'lingqCreated': daily_lingq_created,
+        'knownWords': daily_known_words,
+        'goal': user_daily_goal
+    })
+
+    start_of_last_7_days = now - timedelta(days=7)
+    weekly_lingq_created = Words.objects.filter(user = user, created_at__gte=start_of_last_7_days, created_at__lt = now).exclude(word_status = 0).count() + Phrases.objects.filter(user = user, created_at__gte=start_of_last_7_days, created_at__lt = now).count()
+    weekly_known_words = Words.objects.filter(user = user, change_to_learn_at__gte = start_of_last_7_days, change_to_learn_at__lt = now).exclude(word_status = 0).count() + Phrases.objects.filter(user = user, change_to_learn_at__gte = start_of_last_7_days, change_to_learn_at__lt = now).count()
+    data_progress.append({
+        'name': 'Last 7 days Activity',
+        'lingqCreated': weekly_lingq_created,
+        'knownWords': weekly_known_words,
+        'goal': user_weekly_goal
+    })
+
+    start_of_last_30_days = now - timedelta(days=30)
+    montly_lingq_created = Words.objects.filter(user = user, created_at__gte=start_of_last_30_days, created_at__lt=now).exclude(word_status=0).count() + Phrases.objects.filter(user = user, created_at__gte=start_of_last_30_days, created_at__lt=now).count()
+    monthly_known_words = Words.objects.filter(user = user, change_to_learn_at__gte=start_of_last_30_days, change_to_learn_at__lt=now).exclude(word_status=0).count() + Phrases.objects.filter(user = user, change_to_learn_at__gte=start_of_last_30_days, change_to_learn_at__lt=now).count()
+    data_progress.append({
+        'name': 'Last 30 days Activity',
+        'lingqCreated': montly_lingq_created,
+        'knownWords': monthly_known_words,
+        'goal': user_monthly_goal
+    })
+
+    start_of_last_three_months = now - timedelta(days=90)
+    last_three_months_lingq_created = Words.objects.filter(user = user, created_at__gte=start_of_last_three_months, created_at__lt=now).exclude(word_status = 0).count() + Phrases.objects.filter(user = user, created_at__gte=start_of_last_three_months, created_at__lt=now).count()
+    last_three_months_known_words = Words.objects.filter(user = user, change_to_learn_at__gte= start_of_last_three_months, change_to_learn_at__lt= now).exclude(word_status=0).count() +  Phrases.objects.filter(user = user, change_to_learn_at__gte= start_of_last_three_months, change_to_learn_at__lt= now).count()
+    data_progress.append({
+        'name': 'Last 3 Monthly Activity',
+        'lingqCreated': last_three_months_lingq_created,
+        'knownWords': last_three_months_known_words,
+        'goal': user_three_month_goal
+    })
+
+    return JsonResponse( data_progress, status = 200)
+    
+
+
+
+
+
+    #     const demoprogressData = [
+#    {
+#     name: 'Today Activity',
+#     lingqCreated: 10,
+#     knownWords: 30,
+#     goal: 120
+#   },
+#    {
+#     name: 'Last 7 days Activity',
+#     lingqCreated: 10,
+#     knownWords: 20,
+#     goal: 120
+#   },
+#    {
+#     name: 'Last 30 days Activity',
+#     lingqCreated: 10,
+#     knownWords: 40,
+#     goal: 120
+#   },
+#    {
+#     name: 'Last 3 Monthly Activity',
+#     lingqCreated: 10,
+#     knownWords: 40,
+#     goal: 120
+#   },
+# ]
 
 
 

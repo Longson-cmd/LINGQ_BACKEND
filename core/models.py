@@ -13,6 +13,8 @@ from django.utils import timezone
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    daily_goal = models.IntegerField(default=120)
+
     is_paying_customer = models.BooleanField(default=False)
 
     paid_until = models.DateTimeField(null=True, blank=True)
@@ -94,7 +96,10 @@ class Lessons(models.Model):
 class Words(models.Model):
     user = models.ForeignKey(User, on_delete= models.CASCADE)
 
-    updated_at = models.DateTimeField(auto_now=True)  # 👈 important
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    change_to_learn_at = models.DateTimeField(null=True, blank=True)  
 
     word_key = models.CharField(max_length=50)
 
@@ -136,6 +141,10 @@ class Word_Tags(models.Model):
 
 class Phrases(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    change_to_learn_at = models.DateTimeField(null=True, blank=True)
 
     phrase = models.CharField(max_length=100)
 

@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 import json
+from django.utils import timezone
 import traceback
 def is_word(text):
     listWords = text.split(" ")
@@ -31,10 +32,12 @@ def update_word(request):
         status = int(data.get("status", 0))
 
         if is_word(text): 
+
+            if status == 6:
+                return JsonResponse({'message': "Can't add a word with status as 6"}, status = 401)
             word, created = Words.objects.get_or_create(user = request.user, word_key = text, defaults= {"word_status" : status})
             if created:
                 print(f'Created {text} sucessfully')
-
             if "your_meanings" in list_changes:
                 meanings_qs = Word_Meanings.objects.filter( word = word)
                 meanings_qs.delete()
@@ -52,6 +55,9 @@ def update_word(request):
             if "status" in list_changes:
                 print(f"Change status {text} from {word.word_status} to {status}")
                 word.word_status = status
+                
+                if status == 4 or status == 5:
+                    word.change_to_learn_at = timezone.now()
                 word.save()
         else:
             if status == 0:
@@ -81,6 +87,8 @@ def update_word(request):
                 if "status" in list_changes:
                     print(f"Change status {text} from {phrase.phrase_status} to {status}")
                     phrase.phrase_status = status
+                    if status == 4 or status == 5:
+                        phrase.change_to_learn_at = timezone.now()
                     phrase.save()
     except Exception as e:
         print("❌ Exception occurred:", e)
