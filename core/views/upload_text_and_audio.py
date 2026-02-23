@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from utils.handle_upload_text_file import convert_input_to_text
-from utils.extract_data import get_lists_from_text, get_subtexts
+from utils.extract_data import get_lists_from_text, get_subtexts, validate_file_size
 from core.models import  Lessons, Courses
 from django.core.files.base import ContentFile
 import os
@@ -44,6 +44,9 @@ def upload_text(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Authentication required"}, status=401)
     uploaded_file = request.FILES.get('file')
+
+    if not validate_file_size(uploaded_file):
+        return JsonResponse({'message': 'File size must be under 50MB'})
 
     user = request.user
     if not uploaded_file:

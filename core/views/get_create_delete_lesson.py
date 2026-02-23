@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from utils.handle_upload_text_file import create_lesson
 from utils.handle_youtube_url import get_timestamp, get_thumbnail_url
-from utils.extract_data import get_lists_from_text
+from utils.extract_data import get_lists_from_text, get_subtexts, validate_file_size
 from utils.handle_upload_text_file import convert_input_to_text
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -27,7 +27,6 @@ def get_lesson(request):
     print("USER", request.user)
     if not lesson_name or not course_name:
         return JsonResponse({"message": "Missing lesson name or course name!"}, status = 400)
-
 
     try:
         course = Courses.objects.get(user = request.user, course_name = course_name)
@@ -180,6 +179,16 @@ def create_youtube_lesson(request):
     },
      status = 200)
 
+def generate_unique_filename(course_obj, basename):
+    if not Lessons.objects.filter(course = course_obj, lesson_name = basename).exists():
+        return  basename
+    counter = 2
+    while True:
+        new_name = f"{basename}_{counter}"
+        if not Lessons.objects.filter(course = course_obj, lesson_name = new_name).exists():
+            return new_name       
+        counter += 1
+
 
 @csrf_exempt
 @login_required
@@ -197,43 +206,85 @@ def create_lesson_manually(request):
 
     if not lesson_name or (not input_text and not frontend_text_file):
         return JsonResponse({'message' : 'Missing necessary fields!'}, status = 400)
-    
+    if not validate_file_size(frontend_text_file): 
+        return JsonResponse({'message': 'File size must be under 50MB'}, status = 400)
+
     course, created = Courses.objects.get_or_create(user = request.user, course_name = course_name)
-    course.last_open_at = timezone.now()
-    course.save(update_fields= ['last_open_at'])
+    
     if Lessons.objects.filter(course = course, lesson_name = lesson_name).exists():
         return JsonResponse({"message": 'Lesson already exists!'}, status = 409)
     
     
     try:
         if input_text:
-            list_ref, list_id = get_lists_from_text(input_text)
+            list_subtexts = get_subtexts(input_text)
         else:
             text = convert_input_to_text(frontend_text_file)
-            list_ref, list_id = get_lists_from_text(text)
+            list_subtexts = get_subtexts(text)
 
-        text_file_dict = {"list_ref": list_ref, "list_id" : list_id}
-        text_file_bytes = json.dumps(text_file_dict, ensure_ascii=False).encode('utf-8')
-        text_file_name = lesson_name.replace(" ", '_') + '.json'
-        text_file = ContentFile(text_file_bytes)
+
+        if len(list_subtexts) == 1:
+            list_ref, list_id = get_lists_from_text(list_subtexts[0])
+            text_file_dict = {"list_ref": list_ref, "list_id" : list_id}
+            text_file_bytes = json.dumps(text_file_dict, ensure_ascii=False).encode('utf-8')
+            text_file_name = lesson_name + '.json'
+            text_file = ContentFile(text_file_bytes)
+
+            lesson= Lessons.objects.create(course = course, lesson_name = lesson_name, last_open_at = timezone.now())
+            lesson.text_file.save(text_file_name, text_file, save = True)
+
+
+            if picture_file:
+                lesson.lesson_img_file.save(picture_file.name, picture_file, save = True)
+            if audio_file:
+                lesson.audio_file.save(audio_file.name, audio_file, save= True)
+            
+            course.last_open_at = timezone.now()
+            course.save(update_fields= ['last_open_at'])
+            return JsonResponse({
+                'message' : f'Create lesson {lesson_name} successfully!',
+                "lesson_name": lesson_name,
+                "course_name": course_name
+            }, status = 200)
+
+            
+        else:
+            list_lesson_names = []
+            for idx, subtext in enumerate(list_subtexts):
+                basename = f'{lesson_name} {idx + 1}'
+                sub_lesson_name = generate_unique_filename(course, basename)
+                list_lesson_names.append(sub_lesson_name)
+                text_file_name  = sub_lesson_name + '.json'
+                list_ref, list_id = get_lists_from_text(subtext)
+                text_file_dict = {'list_ref': list_ref, 'list_id': list_id}
+                text_file_bytes = json.dumps(text_file_dict, ensure_ascii=False).encode('utf-8')
+                text_file= ContentFile(text_file_bytes)
+                lesson_obj =  Lessons.objects.create(
+                    course = course,
+                    lesson_name = sub_lesson_name,
+                    last_open_at = timezone.now()
+                )
+
+                lesson_obj.text_file.save(text_file_name, text_file, save = True)
+                if picture_file:
+                    lesson_obj.lesson_img_file.save(picture_file.name, picture_file, save = True)
+
+            course.last_open_at = timezone.now()
+            course.save(update_fields= ['last_open_at'])
+            return JsonResponse({
+                'message': f'Create {len(list_subtexts)} lessons.',
+                "lesson_name": list_lesson_names[0],
+                'course_name': course_name
+            }, status = 200)
+        
+        
     except Exception as e:
         print('Exception occurred: ', e)
         # traceback.print_exc()
         return JsonResponse({'message': str(e)}, status = 500)
-    lesson= Lessons.objects.create(course = course, lesson_name = lesson_name, last_open_at = timezone.now())
-    lesson.text_file.save(text_file_name, text_file, save = True)
+    
 
-
-    if picture_file:
-        lesson.lesson_img_file.save(picture_file.name, picture_file, save = True)
-    if audio_file:
-        lesson.audio_file.save(audio_file.name, audio_file, save= True)
-
-    return JsonResponse({
-        'message' : f'Create lesson {lesson_name} successfully!',
-        "lesson_name": lesson_name,
-        "course_name": course_name
-    }, status = 200)
+    
 
     
 

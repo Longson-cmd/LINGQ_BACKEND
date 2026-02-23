@@ -4,6 +4,7 @@ import re
 import unicodedata
 
 
+
 # ======================================
 # 1. Load and preprocess raw text
 # ======================================
@@ -178,6 +179,10 @@ def get_lists_whisper(whisper_path):
             )
 
     return  whisper_wordtimestamp, whisper
+
+def validate_file_size(file):
+    max_size = 20 * 1024 * 1024
+    return file.size <= max_size
 
 
 if __name__ == "__main__":

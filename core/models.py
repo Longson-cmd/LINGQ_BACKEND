@@ -66,6 +66,8 @@ class Lessons(models.Model):
 
     lesson_name = models.CharField(max_length=100)
 
+    created_at = models.DateTimeField(auto_now_add= True)
+
     last_open_at = models.DateTimeField(null = True, blank=True)
 
     youtube_url = models.CharField(max_length=255, null = True, blank=True)
