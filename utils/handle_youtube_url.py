@@ -15,7 +15,6 @@ import os
 
 import glob
  
-from utils.extract_data import get_lists_from_text
 # from extract_data import get_lists_from_text
 
 
@@ -28,6 +27,56 @@ def convert_time_stamp(time):
 def convert_text(text):
     text = text.replace("\n", " ")
     return text
+
+def get_subtexts_and_timestamp(caption):
+    list_time_stamp = []
+    current_subtext_lines = []
+    youtube_list_subtexts = []
+    current_lesson_time_stamp = []
+    index_current_chuck = 0
+    max_time_current_chuck = 15 * 60 * (index_current_chuck +1)
+    start_current_chuck = convert_time_stamp(caption[0].start)
+
+    for c in caption:
+        line_text = convert_text(c.text)
+
+        if convert_time_stamp(c.end) <= max_time_current_chuck:
+            current_subtext_lines.append(line_text)
+            current_lesson_time_stamp.append({
+                'start': convert_time_stamp(c.start),
+                'end': convert_time_stamp(c.end),
+                'text' : line_text
+            })
+        else:
+            youtube_list_subtexts.append({
+                'start': start_current_chuck,
+                'text': '\n'.join(current_subtext_lines)
+            })
+
+            list_time_stamp.append(current_lesson_time_stamp)
+
+            current_subtext_lines = [line_text]
+            current_lesson_time_stamp = [{
+                'start': convert_time_stamp(c.start),
+                'end': convert_time_stamp(c.end),
+                'text': line_text
+            }]
+            start_current_chuck = convert_time_stamp(c.start)
+            index_current_chuck += 1
+            max_time_current_chuck = 15 * 60 * (index_current_chuck +1)
+
+         
+    
+    if current_subtext_lines:
+        youtube_list_subtexts.append({
+            'start': start_current_chuck,
+            'text': '\n'.join(current_subtext_lines)
+        })
+
+        list_time_stamp.append(current_lesson_time_stamp)
+
+    return list_time_stamp, youtube_list_subtexts
+
 
 
 def get_timestamp(url):
@@ -72,28 +121,12 @@ def get_timestamp(url):
             raise FileNotFoundError("No VTT subtitle file found")
 
         captions = webvtt.read(vtt_files[0])
-        # Convert subtitles into a list of timestamp objects
-        list_time_stamp = []
-        subtitles_lines = []
-        for c in captions:
-            text_norm = convert_text(c.text)
-            list_time_stamp.append({
-                "start": convert_time_stamp(c.start),   # Start time (HH:MM:SS.mmm)
-                "end": convert_time_stamp(c.end),       # End time (HH:MM:SS.mmm)
-                "text": text_norm    # Subtitle text
-            })
-            subtitles_lines.append(text_norm)
-    subtitles = "\n".join(subtitles_lines)
-    list_ref, list_id = get_lists_from_text(subtitles)
-    json_dict = {"list_ref": list_ref, "list_id": list_id}
+        list_timestamp, youtube_list_subtexts = get_subtexts_and_timestamp(captions)
 
-    return list_time_stamp, json_dict, info['id'], info.get("title").strip().replace(" ", "_")
+    return list_timestamp, youtube_list_subtexts, info['id'], info.get("title").strip().replace(" ", "_")
     
 
-# def get_thumbnail_url(url):
-#     with YoutubeDL({"quiet": True, "no_warnings":True}) as ydl:
-#         info = ydl.extract_info(url, download=False)
-#         return info.get("thumbnail")
+
 def get_thumbnail_url(url):
     ydl_opts = {
         "quiet": True,

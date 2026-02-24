@@ -119,6 +119,17 @@ def save_thumbnail_to_lesson(lesson, thumbnail_url):
         save = True
     )
 
+def generate_unique_lesson_name(course_obj, basename):
+    if not Lessons.objects.filter(course = course_obj, lesson_name = basename).exists():
+        return  basename
+    counter = 2
+    while True:
+        new_name = f"{basename}_{counter}"
+        if not Lessons.objects.filter(course = course_obj, lesson_name = new_name).exists():
+            return new_name       
+        counter += 1
+
+
 @csrf_exempt
 @login_required
 def create_youtube_lesson(request):
@@ -137,7 +148,7 @@ def create_youtube_lesson(request):
  
     # ---------create new lesson----------
     try:
-        list_timestamp, json_dict, youtube_id, youtube_title = get_timestamp(youtube_url)
+        youtube_list_timestamp, youtube_list_subtexts, youtube_id, youtube_title = get_timestamp(youtube_url)
         
     except Exception as e:
         print("Exception occurred: ", e)
@@ -147,47 +158,85 @@ def create_youtube_lesson(request):
     
     lesson_name = lesson_name if lesson_name else youtube_title
     course , created = Courses.objects.get_or_create(user = request.user, course_name = course_name)
-    course.last_open_at = timezone.now()
-    course.save(update_fields=['last_open_at'])
+    
     if Lessons.objects.filter(course  = course, lesson_name = lesson_name).exists():
         return JsonResponse({"message": f"lesson {lesson_name} already exists!"}, status = 409 )
-    
     try:
-        text_file_name = youtube_id + ".json"
-        text_file_bytes = json.dumps(json_dict, ensure_ascii= False).encode("utf-8")
-        text_file = ContentFile(text_file_bytes)
-        
-        timestamp_file_name = youtube_id + "_timestamp" + ".json"
-        timestamp_file_bytes = json.dumps(list_timestamp, indent=2, ensure_ascii=False).encode("utf-8")
-        timestamp_file = ContentFile(timestamp_file_bytes)
+        thumbnail = get_thumbnail_url(youtube_url)
 
-        lesson = Lessons.objects.create(course = course, lesson_name = lesson_name, youtube_url = youtube_url, last_open_at = timezone.now())
-        lesson.text_file.save(text_file_name, text_file, save = True)
-        lesson.timestamp_file.save(timestamp_file_name, timestamp_file, save = True)
+        if len(youtube_list_subtexts) == 1:
+            text_file_name = youtube_id + ".json"
+            list_timestamp = youtube_list_timestamp[0]
+            subtext = youtube_list_subtexts[0].get('text')
+            list_ref, list_id = get_lists_from_text(subtext)
+            json_dict = {'list_ref': list_ref, 'list_id': list_id}
+            text_file_bytes = json.dumps(json_dict, ensure_ascii= False).encode("utf-8")
+            text_file = ContentFile(text_file_bytes)
+            
+            timestamp_file_name = youtube_id + "_timestamp" + ".json"
+            timestamp_file_bytes = json.dumps(list_timestamp, indent=2, ensure_ascii=False).encode("utf-8")
+            timestamp_file = ContentFile(timestamp_file_bytes)
+
+            lesson = Lessons.objects.create(course = course, lesson_name = lesson_name, youtube_url = youtube_url, youtube_start_time = youtube_list_subtexts[0].get('start'), last_open_at = timezone.now())
+            lesson.text_file.save(text_file_name, text_file, save = True)
+            lesson.timestamp_file.save(timestamp_file_name, timestamp_file, save = True)
+            
+            if thumbnail:
+                save_thumbnail_to_lesson(lesson, thumbnail)
+
+        
+        else:
+            for idx, item in enumerate(youtube_list_subtexts):
+                youtube_start_time = item.get('start')
+                if idx ==0:
+                    sub_lesson_name = lesson_name
+                else:
+                    basename = f'{lesson_name} {idx +1}'
+                    sub_lesson_name = generate_unique_lesson_name(course, basename)
+                list_timestamp = youtube_list_timestamp[idx]
+                subtext = item.get('text')
+                text_file_name = f'{youtube_id}_{idx}.json'
+                timestamp_file_name = f'{youtube_id}_{idx}_timestamp.json'
+
+                list_ref, list_id = get_lists_from_text(subtext)
+                json_dict = {'list_ref' : list_ref, 'list_id': list_id}
+                text_file_bytes = json.dumps(json_dict, ensure_ascii=False).encode('utf-8')
+                text_file = ContentFile(text_file_bytes)
+
+                list_timestamp_bytes = json.dumps(list_timestamp, ensure_ascii=False).encode('utf-8')
+                timestamp_file = ContentFile(list_timestamp_bytes)
+
+                lesson_obj = Lessons.objects.create(
+                    course = course,
+                    lesson_name = sub_lesson_name,
+                    youtube_url = youtube_url, 
+                    youtube_start_time = youtube_start_time,
+                    last_open_at = timezone.now()
+                )
+
+                lesson_obj.text_file.save(text_file_name, text_file, save = True)
+                lesson_obj.timestamp_file.save(timestamp_file_name,timestamp_file, save= True )
+
+                if thumbnail:
+                    save_thumbnail_to_lesson(lesson_obj, thumbnail)
+
+        course.last_open_at = timezone.now()
+        course.save(update_fields=['last_open_at'])
+        return JsonResponse({
+                "message": "Successfully created new lesson!",
+                "lesson_name": lesson_name,
+                'course_name': course_name
+            },
+            status = 201)
+
+        
     except Exception as e:
         print("Exception occured: ", e)
         # traceback.print_exc()
         return JsonResponse({'message': str(e)}, status = 500)
 
-    thumbnail = get_thumbnail_url(youtube_url)
-    if thumbnail:
-        save_thumbnail_to_lesson(lesson, thumbnail)
-    return JsonResponse({
-        "message": "Successfully created new lesson!",
-        "lesson_name": lesson_name,
-        'course_name': course_name
-    },
-     status = 200)
-
-def generate_unique_filename(course_obj, basename):
-    if not Lessons.objects.filter(course = course_obj, lesson_name = basename).exists():
-        return  basename
-    counter = 2
-    while True:
-        new_name = f"{basename}_{counter}"
-        if not Lessons.objects.filter(course = course_obj, lesson_name = new_name).exists():
-            return new_name       
-        counter += 1
+    
+    
 
 
 @csrf_exempt
@@ -252,7 +301,10 @@ def create_lesson_manually(request):
             list_lesson_names = []
             for idx, subtext in enumerate(list_subtexts):
                 basename = f'{lesson_name} {idx + 1}'
-                sub_lesson_name = generate_unique_filename(course, basename)
+                if idx == 0:
+                    sub_lesson_name = lesson_name
+                else:
+                    sub_lesson_name = generate_unique_lesson_name(course, basename)
                 list_lesson_names.append(sub_lesson_name)
                 text_file_name  = sub_lesson_name + '.json'
                 list_ref, list_id = get_lists_from_text(subtext)

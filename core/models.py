@@ -52,6 +52,10 @@ class Courses(models.Model):
 
     last_open_at = models.DateTimeField(null = True, blank=True)
 
+    is_system = models.BooleanField(default=False) 
+
+    topcie = models.CharField(max_length=100, null = True, blank=True)
+
     course_img_file = models.FileField(upload_to= upload_course_file, null = True, blank=True)
 
     def __str__(self):
@@ -71,6 +75,8 @@ class Lessons(models.Model):
     last_open_at = models.DateTimeField(null = True, blank=True)
 
     youtube_url = models.CharField(max_length=255, null = True, blank=True)
+
+    youtube_start_time = models.FloatField(null = True, blank=True)
 
     text_file = models.FileField(upload_to=upload_lesson_file)
 
