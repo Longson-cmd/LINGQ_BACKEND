@@ -88,7 +88,9 @@ class Command(BaseCommand):
             print("First user already imported courses")
             return
         list_file_names = ['test0.txt', 'test1.txt', 'test2.txt', 'test3.txt', 'check.txt']
+        # list_file_names = [ 'test0.txt']
         for idx_course in range(3):
+        # for idx_course in range(1):
             course_obj = create_couser_obj(first_user, idx_course)
             for idx_lesson, file_name in enumerate(list_file_names):
                 text_file_path = get_text_file_path(file_name)

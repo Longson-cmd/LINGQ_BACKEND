@@ -301,6 +301,7 @@ def calculate_progress_data(request):
         'goal': user_monthly_goal
     })
 
+
     start_of_last_three_months = now - timedelta(days=90)
     last_three_months_lingq_created = Words.objects.filter(user = user, created_at__gte=start_of_last_three_months, created_at__lt=now).exclude(word_status = 0).count() + Phrases.objects.filter(user = user, created_at__gte=start_of_last_three_months, created_at__lt=now).count()
     last_three_months_known_words = Words.objects.filter(user = user, change_to_learn_at__gte= start_of_last_three_months, change_to_learn_at__lt= now).exclude(word_status=0).count() +  Phrases.objects.filter(user = user, change_to_learn_at__gte= start_of_last_three_months, change_to_learn_at__lt= now).count()
@@ -311,43 +312,16 @@ def calculate_progress_data(request):
         'goal': user_three_month_goal
     })
 
-    return JsonResponse( data_progress, status = 200)
+    all_time_lingq_created = Words.objects.filter(user = user).exclude(word_status = 0).count() + Phrases.objects.filter(user = user).count()
+    all_time_known_words = Words.objects.filter(user = user, word_status__in = [4, 5]).count() + Phrases.objects.filter(user = user, phrase_status__in = [4, 5]).count()
+    data_progress.append({
+        'name': 'All time',
+        "lingqCreated" : all_time_lingq_created,
+        'knownWords' : all_time_known_words,
+        'goal': 21000
+    })
+
+    return JsonResponse( data_progress,safe=False, status = 200)
     
-
-
-
-
-
-    #     const demoprogressData = [
-#    {
-#     name: 'Today Activity',
-#     lingqCreated: 10,
-#     knownWords: 30,
-#     goal: 120
-#   },
-#    {
-#     name: 'Last 7 days Activity',
-#     lingqCreated: 10,
-#     knownWords: 20,
-#     goal: 120
-#   },
-#    {
-#     name: 'Last 30 days Activity',
-#     lingqCreated: 10,
-#     knownWords: 40,
-#     goal: 120
-#   },
-#    {
-#     name: 'Last 3 Monthly Activity',
-#     lingqCreated: 10,
-#     knownWords: 40,
-#     goal: 120
-#   },
-# ]
-
-
-
-    
-
 
 

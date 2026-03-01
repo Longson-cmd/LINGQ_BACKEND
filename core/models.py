@@ -74,9 +74,11 @@ class Lessons(models.Model):
 
     last_open_at = models.DateTimeField(null = True, blank=True)
 
-    youtube_url = models.CharField(max_length=255, null = True, blank=True)
+    youtube_id = models.CharField(max_length=255, null = True, blank=True)
 
     youtube_start_time = models.FloatField(null = True, blank=True)
+
+    youtube_duration = models.PositiveIntegerField(null= True, blank=True)
 
     text_file = models.FileField(upload_to=upload_lesson_file)
 

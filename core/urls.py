@@ -6,7 +6,7 @@ from core.views.create_delete_course import create_course, delete_course
 from core.views.get_create_delete_lesson import get_lesson, delete_lesson, create_youtube_lesson, create_lesson_manually
 from core.views.upload_text_and_audio import upload_text, upload_audio
 from core.views.update_word import update_word, finish_lesson
-from core.views.caculate_specifications import get_data_cards, show_course_infos, get_list_courses
+from core.views.caculate_specifications import get_data_cards, show_course_infos, get_list_courses, calculate_progress_data
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -22,6 +22,7 @@ urlpatterns = [
     path('continue_study/', get_data_cards, name='get_data_cards'),
     path('show_course_infos/', show_course_infos, name='show_course_infos'),
     path('get_list_courses/', get_list_courses, name='get_list_courses'),
+    path('get_progress_data/', calculate_progress_data, name = "calculate_progress_data"),
 
     # lesson path
     path("create_youtube_lesson/", create_youtube_lesson, name = "create_youtube_lesson"),

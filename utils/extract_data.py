@@ -36,14 +36,14 @@ def get_subtexts(text, limit=2000):
     paras = [para.strip() for para in paras if para.strip()]
 
     number_words_of_current_subtext = len(paras[0].split())
-    current_value_subtexts = [paras[0]] 
+    current_value_subtexts = paras[0]
     list_subtexts = []
 
     for para in paras[1:]:  
         number_of_words_in_para = len(para.split())
         if number_words_of_current_subtext +  number_of_words_in_para> limit:
             list_subtexts.append(current_value_subtexts)
-            current_value_subtexts = [para]
+            current_value_subtexts = para
             number_words_of_current_subtext = len(para.split())
         else:
             current_value_subtexts.append(para)
@@ -68,11 +68,14 @@ def get_sentence_lists(subtext: str):
             - two_dimention_sentence_list (list[list[str]]):
               list of paragraphs, each containing a list of sentences
     """
+    # print('TEXT', subtext)
 
+    # Split into paragraphs properly
+    paragraphs = [p.strip() for p in subtext.split("\n") if p.strip()]
     two_dimention_sentence_list = []
 
     # Process each paragraph
-    for p in subtext:
+    for p in paragraphs:
         # Clean spacing before punctuation
         p = re.sub(r"\s+([?.!])", r"\1", p)
         # Mark sentence endings temporarily with <S>
@@ -80,18 +83,19 @@ def get_sentence_lists(subtext: str):
         # Normalize multiple spaces/tabs
         p = re.sub(r"[ \t]+", " ", p)
 
-
+        # print('paragraph', p)
         # Split paragraph into sentences
         sens = [s.strip() for s in p.split("<S>") if s.strip()]
 
         # Collect results
         two_dimention_sentence_list.append(sens)
-
+    # print('TWO DIMENTION SENTENCE LIST',two_dimention_sentence_list )
     return  two_dimention_sentence_list
 
 
 
 def get_lists_from_text(text):
+    
     # Generate sentence lists
     two_dimention_sentence_list = get_sentence_lists(text)
     list_id = []   # list of tuples: (word, (word_index, sentence_index))
@@ -107,7 +111,7 @@ def get_lists_from_text(text):
                 list_ref.append(clean_word(word))
 
         count_sentence += len(paragraph)
-    print('total number of sentences', count_sentence)
+    # print('total number of sentences', count_sentence)
 
     # Wrap into dictionary for export
     return list_ref, list_id

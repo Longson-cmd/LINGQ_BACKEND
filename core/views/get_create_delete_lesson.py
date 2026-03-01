@@ -52,18 +52,22 @@ def get_lesson(request):
                 raw = f.read()
                 list_timestamp = json.loads(raw.decode('utf-8'))
 
-        youtube_url = lesson.youtube_url if lesson.youtube_url else ""
-        audio_url = lesson.audio_file.url if (lesson.has_audio and lesson.audio_file and lesson.audio_file.name) else ""
-        audio_list ={
-            "youtube_url": youtube_url,
-            "audio_url": audio_url,
+        youtube_id = lesson.youtube_id if lesson.youtube_id else ""
+        youtube_start_time = lesson.youtube_start_time if lesson.youtube_start_time else 0
+        youtube_duration = lesson.youtube_duration if lesson.youtube_duration else 0
+
+        # audio_url = lesson.audio_file.url if (lesson.has_audio and lesson.audio_file and lesson.audio_file.name) else ""
+        youtube_data ={
+            "youtube_id": youtube_id,
+            "youtube_start_time": youtube_start_time,
+            'youtube_duration': youtube_duration
         }
         #content as a python list
         return JsonResponse({
             "lesson_data": lesson_data,
             "list_sentences": list_sentences,
             "Tags_Meanings" : Tags_Meanings,
-            "audios": audio_list,
+            "youtube_data": youtube_data,
             "core_data": core_data,
             "timestamp": list_timestamp 
         },  
@@ -177,7 +181,7 @@ def create_youtube_lesson(request):
             timestamp_file_bytes = json.dumps(list_timestamp, indent=2, ensure_ascii=False).encode("utf-8")
             timestamp_file = ContentFile(timestamp_file_bytes)
 
-            lesson = Lessons.objects.create(course = course, lesson_name = lesson_name, youtube_url = youtube_url, youtube_start_time = youtube_list_subtexts[0].get('start'), last_open_at = timezone.now())
+            lesson = Lessons.objects.create(course = course, lesson_name = lesson_name, youtube_id = youtube_id, youtube_start_time = youtube_list_subtexts[0].get('start'), last_open_at = timezone.now())
             lesson.text_file.save(text_file_name, text_file, save = True)
             lesson.timestamp_file.save(timestamp_file_name, timestamp_file, save = True)
             
@@ -209,7 +213,7 @@ def create_youtube_lesson(request):
                 lesson_obj = Lessons.objects.create(
                     course = course,
                     lesson_name = sub_lesson_name,
-                    youtube_url = youtube_url, 
+                    youtube_id = youtube_id, 
                     youtube_start_time = youtube_start_time,
                     last_open_at = timezone.now()
                 )
@@ -232,7 +236,7 @@ def create_youtube_lesson(request):
         
     except Exception as e:
         print("Exception occured: ", e)
-        # traceback.print_exc()
+        traceback.print_exc()
         return JsonResponse({'message': str(e)}, status = 500)
 
     
@@ -253,10 +257,11 @@ def create_lesson_manually(request):
     picture_file = request.FILES.get('picture')
     audio_file = request.FILES.get('audiofile')
 
+    print('input_text', input_text)
+
     if not lesson_name or (not input_text and not frontend_text_file):
         return JsonResponse({'message' : 'Missing necessary fields!'}, status = 400)
-    if not validate_file_size(frontend_text_file): 
-        return JsonResponse({'message': 'File size must be under 50MB'}, status = 400)
+    
 
     course, created = Courses.objects.get_or_create(user = request.user, course_name = course_name)
     
@@ -266,8 +271,12 @@ def create_lesson_manually(request):
     
     try:
         if input_text:
+            # print('debug get sub texts')
             list_subtexts = get_subtexts(input_text)
+            # print('list_subtexts', list_subtexts)
         else:
+            if not validate_file_size(frontend_text_file): 
+                return JsonResponse({'message': 'File size must be under 50MB'}, status = 400)
             text = convert_input_to_text(frontend_text_file)
             list_subtexts = get_subtexts(text)
 
@@ -275,6 +284,7 @@ def create_lesson_manually(request):
         if len(list_subtexts) == 1:
             list_ref, list_id = get_lists_from_text(list_subtexts[0])
             text_file_dict = {"list_ref": list_ref, "list_id" : list_id}
+            # print('text_file_dict', text_file_dict)
             text_file_bytes = json.dumps(text_file_dict, ensure_ascii=False).encode('utf-8')
             text_file_name = lesson_name + '.json'
             text_file = ContentFile(text_file_bytes)

@@ -111,8 +111,10 @@ def finish_lesson(request):
     for key, value in data.items():  
         if len(key.split()) > 1 or value != 6 :
             continue
-        Words.objects.update_or_create(user = request.user, word_key = key, defaults= {"word_status" : 5})
+        Words.objects.update_or_create(user = request.user, word_key = key, defaults= {"word_status" : 5}, change_to_learn_at = timezone.now())
         list_words_update.append(key)
+
+    
 
     return JsonResponse({"message": "Successfully updated word from this lesson!", "list_words_updated": list_words_update}, status = 200)
 
